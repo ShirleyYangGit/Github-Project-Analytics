@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+
+{% block scripts %}
+{{ super ()}}
+<script type = "text/javascript">
+
+$(document).ready(
+function(){
+  $.post('get_user_info',
+  { 
+    TeamName: $("#TeamName").val(),
+    UserName: $("#UserName").val(),
+    StartDate: $("#StartDate").val(),
+    EndDate: $("#EndDate").val()
+  },
+  function(data){
+      user_data = JSON.parse(data)
+      $("#pr_rank").append(user_data["pr_rank"])
+      $("#comments_rank").append(user_data["comments_rank"])
+      $("#three_top_review_to").append(user_data["three_top_review_to"])	
+      $("#three_top_review_from").append(user_data["three_top_review_from"])
+	}
+  );
+}
+);
+
+function get_image(id)
+{
+  if(id == "") { id = "img_to" }  
+  $.post('get_user_info',
+  { 
+    TeamName: $("#TeamName").val(),
+    UserName: $("#UserName").val(),
+    StartDate: $("#StartDate").val(),
+    EndDate: $("#EndDate").val()
+  },
+  function(data){
+      user_data = JSON.parse(data)
+      $("#image").attr("src", "data:image/png;base64, " + user_data[id])	
+	  $("li").attr("class", "")
+	  $("#"+id).attr("class", "active")	
+      if ($("#UserName").val() != "" && ($("h2").val() !=  $("#UserName").val() + " Information"))  { $("h2").text($("#UserName").val() + " Information"); }	  
+	}
+  );
+}  
+
+</script>
+{% endblock %}
+
+{% block page_content %}
+  <div class="page-hearder">
+    <h2>{{userName}} Information</h2>
+  </div>
+
+  <div class="navbar-form navbar-left" >
+    <div class="form-group">
+	  <input id="TeamName" type="text" class="form-control" placeholder="TeamName">
+	</div>
+	<div class="form-group">
+	  <input id="UserName" type="text" class="form-control" placeholder="UserName">
+	</div>
+	<div class="form-group">
+	  <input id="StartDate" type="date" class="form-control" placeholder="StartDate">
+	</div>
+	<div class="form-group">
+	  <input id="EndDate" type="date" class="form-control" placeholder="EndDate">	  
+	</div>
+	<button class="btn btn-default" onclick="get_image('')">Submit</button>
+  </div>
+  <br/><br/><br/><br/><br/>
+  
+  <div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Basic Information</h3>
+  </div>
+  <div class="panel-body">
+    <p id = "pr_rank"> pr_count rank is </p>
+	<p id = "comments_rank"> comments_count rank is </p>
+    <p id = "three_top_review_to"> three_top_review_to is </p> 
+	<p id = "three_top_review_from"> three_top_review_from is </p> 
+  </div>
+  </div>
+<!--  
+  <div>
+  <ul class = "nav nav-tabs">
+    <li role="presentation" id = 'img_to' class="active" onclick="get_image(id)"><a >Review Offer</a></li>
+	<li role="presentation" id = 'img_from' onclick="get_image(id)"><a >Review Gain</a></li>
+  </ul>
+  </div>
+  
+  <div>
+    <img id="image" src = "" >
+  </div>
+  
+  ,
+  function(data){
+      user_data = JSON.parse(data)
+      $("#pr_rank").append(session.pr_rank)
+      $("#comments_rank").append(user_data["comments_rank"])
+      $("#three_top_review_to").append(user_data["three_top_review_to"])	
+      $("#three_top_review_from").append(user_data["three_top_review_from"])
+	}
+-->
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block scripts %}
+{{ super ()}}
+<script type = "text/javascript">
+$(document).ready(get_image("image1"));
+
+function get_image(id)
+{
+  if(id == "") { id = "image1" }
+  console.log(id)
+  $.post('get_global_image',
+  { StartDate: $("#StartDate").val(),
+    EndDate: $("#EndDate").val(),
+    image_name: id
+  },
+  function(data){
+      $("#image").attr("src", "data:image/png;base64, " + data)	
+	  $("li").attr("class", "")
+	  $("#"+id).attr("class", "active")
+	}
+  );
+}  
+
+</script>
+{% endblock %}
+
+{% block page_content %}
+  <div class="page-hearder">
+    <h2>Global Information</h2>
+  </div>
+<!--  
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+--> 
+
+  <div class="navbar-form navbar-left">
+    <div class="form-group">
+	  <input id="StartDate" type="date" class="form-control" placeholder="StartDate">
+	</div>
+	<div class="form-group">
+	  <input id="EndDate" type="date" class="form-control" placeholder="EndDate">	  
+	</div>
+	<button class="btn btn-default" onclick="get_image('')">Submit</button>
+	<!--
+	<dl>
+      <dt>StartDate:
+      <dd><input type=text name=startDate>
+      <dt>EndDate:
+      <dd><input type=text name=endDate>
+      <dd><input type=submit value=Submit>
+    </dl>
+	-->
+  </div>
+  <br/><br/><br/><br/><br/>
+  
+  <div>
+  <ul class = "nav nav-tabs">
+    <li role="presentation" id = 'image1' class="active" onclick="get_image(id)"><a >PR Count Monthly</a></li>
+	<li role="presentation" id = 'image2' onclick="get_image(id)"><a >Review Comments Monthly</a></li>
+  </ul>
+  </div>
+  
+  <div>
+    <img id="image" src = "" >
+  </div>
+<!--  
+  <div>
+    <img src="data:image/png;base64, {{ image1}}">
+  </div>
+-->
+{% endblock %}
+

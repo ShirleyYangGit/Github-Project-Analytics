@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block scripts %}
+{{ super ()}}
+<script type = "text/javascript">
+$(document).ready(get_image("image1"));
+
+function get_image(id)
+{
+  if(id == "") { id = "image1" }  
+  console.log(id)
+  $.post('get_team_image',
+  { 
+    TeamName: $("#TeamName").val(),
+    StartDate: $("#StartDate").val(),
+    EndDate: $("#EndDate").val(),
+    image_name: id
+  },
+  function(data){
+      $("#image").attr("src", "data:image/png;base64, " + data)	
+	  $("li").attr("class", "")
+	  $("#"+id).attr("class", "active")
+	  if ($("#TeamName").val() != "" && ($("h2").val() !=  $("#TeamName").val() + " Information"))  { $("h2").text($("#TeamName").val() + " Information"); }
+	}
+  );
+}  
+</script>
+{% endblock %}
+
+{% block page_content %}
+  <div class="page-hearder">
+    <h2>{{teamName}} Information</h2>
+  </div>
+
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+
+  <div class="navbar-form navbar-left" >
+    <div class="form-group">
+	  <input id = "TeamName" type="text" class="form-control" placeholder="TeamName">
+	</div>
+	<div class="form-group">
+	  <input id="StartDate" type="date" class="form-control" placeholder="StartDate">
+	</div>
+	<div class="form-group">
+	  <input id="EndDate" type="date" class="form-control" placeholder="EndDate">	  
+	</div>
+	<button  class="btn btn-default" onclick="get_image('')">Submit</button>
+  </div>
+  
+
+  <br/><br/><br/><br/><br/>
+  
+  <div>
+  <ul class = "nav nav-tabs">
+    <li role="presentation" id = 'image1' class="active" onclick="get_image(id)"><a >PR Monthly</a></li>
+	<li role="presentation" id = 'image2' onclick="get_image(id)"><a >Comments Monthly</a></li>
+	<li role="presentation" id = 'image3' onclick="get_image(id)"><a >Avg Duration Monthly</a></li>
+	<li role="presentation" id = 'image4' onclick="get_image(id)"><a >PR Memberly</a></li>
+	<li role="presentation" id = 'image5' onclick="get_image(id)"><a >Comments Memberly</a></li>
+	<li role="presentation" id = 'image6' onclick="get_image(id)"><a >Avg Duration Monthly</a></li>
+  </ul>
+  </div>
+  
+  <div>
+    <img id="image" src = "" >
+  </div>
+
+{% endblock %}
+
