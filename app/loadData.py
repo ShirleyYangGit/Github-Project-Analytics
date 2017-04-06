@@ -2,6 +2,8 @@
 
 import requests
 import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 from datetime import datetime
 import json
 
@@ -34,8 +36,8 @@ def iter_request_data(pr_url, headers):
                     url = clh[0]
                     url = url.strip()
                     url = url[1:len(url)-1]
-        data = r.json()   
-   
+        data = r.json()
+
         for d in data:
             yield d
  
@@ -47,8 +49,7 @@ def load_certain_period_data(url, headers, startDate, endDate):
    
     for pr in iter_request_data(url, headers):                
         pull_request = {}  
-        cms = []   
-        cms.clear()             
+        cms = []              
         if pr['merged_at']:
             pr_merged = True
             pr_end = pr["merged_at"]
@@ -60,8 +61,11 @@ def load_certain_period_data(url, headers, startDate, endDate):
             pr_end = datetime.strftime(datetime.now(), "%Y-%m-%dT%H:%M:%SZ")
         pr_createDate = datetime.strptime(pr["created_at"], "%Y-%m-%dT%H:%M:%SZ")                    
         pr_endDate = datetime.strptime(pr_end, "%Y-%m-%dT%H:%M:%SZ")   
-        # 根据pr_createDate和pr_endDate筛选pr 
-        if startDate< pr_endDate <= endDate or startDate<= pr_createDate < endDate:                  
+        # 根据pr_createDate和pr_endDate筛选pr
+
+        if startDate< pr_endDate <= endDate or startDate<= pr_createDate < endDate:
+            print startDate, endDate
+            print pr_endDate, pr_createDate
             pull_request["id"] = pr["id"]             
             pull_request["user"] = pr["user"]["login"]
             pull_request["number"] = pr["number"]
@@ -78,9 +82,9 @@ def load_certain_period_data(url, headers, startDate, endDate):
             issuse_comments, icm_count = get_comments(issuse_comments_url, headers)
             cms += issuse_comments
             # comments info —— pull requests review comments url
-            review_cmments_url = pr["review_comments_url"]        
-            review_comments, rcm_count= get_comments(review_cmments_url, headers)  
-            cms += review_comments                                                 
+            review_cmments_url = pr["review_comments_url"]
+            review_comments, rcm_count= get_comments(review_cmments_url, headers)
+            cms += review_comments
             # review info url
             review_url = pr['url'] + "/reviews"   
             reviews, re_count = get_pullRequest_review(review_url, headers)     
@@ -106,8 +110,10 @@ def get_comments(url, headers):
     comments = []
     for cm in iter_request_data(url, headers):    
         comment = {}
-        comment['id'] = cm["id"]
         comment['from_user'] = cm["user"]["login"]
+        if comment['from_user'] in ['JenkinsRHD', 'houndci-bot']:
+            continue
+        comment['id'] = cm["id"]
         comment['body'] = cm["body"].replace('\'', '\"')
         comment['submitDate'] = datetime.strptime(cm["updated_at"], "%Y-%m-%dT%H:%M:%SZ")  
         comment['isApproved'] = 0
@@ -122,6 +128,8 @@ def get_pullRequest_review(url, headers):
         review = {}
         review['id'] = rew["id"]
         review['from_user'] = rew["user"]["login"]
+        if review['from_user'] in ['JenkinsRHD', 'houndci-bot']:
+            continue
         review['body'] = rew["body"].replace('\'', '\"')
         review['submitDate'] = datetime.strptime(rew["submitted_at"], "%Y-%m-%dT%H:%M:%SZ")          
         if rew["state"] == 'APPROVED':
@@ -142,7 +150,7 @@ def get_pr_data(repos):
     return data    
 
 
-    
+
 def get_comments_data(data):
     """get comments data from txt file
     args:

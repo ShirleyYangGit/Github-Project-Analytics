@@ -10,6 +10,8 @@ from . import main
 from .. import model
 from .. import rackhd_config
 
+@main.route("/index.html", methods=['GET'])
+@main.route("/index", methods=['GET'])
 @main.route("/", methods=['GET'])
 def index():
 	return render_template('index.html')
@@ -20,16 +22,18 @@ def global_info():
 	
 @main.route("/get_global_image", methods=['POST'] )
 def get_global_image():
-    startDate = request.form['StartDate']
-    endDate = request.form['EndDate']	
+    startDate = request.form['StartDate'] or '2015-10-01'
+    endDate = request.form['EndDate'] or datetime.now()
     image_name = request.form['image_name']
     org = model.Organization()
-    if startDate is "":
-        startDate = datetime.strptime('2015-10-01T00:00:00Z', "%Y-%m-%dT%H:%M:%SZ")
-    if endDate is "":
-        endDate = datetime.now()
+
+    if type(startDate) == type(""):
+        startDate = datetime.strptime(startDate, "%Y-%m-%d")
+    if type(endDate) == type(""):
+        endDate = datetime.strptime(endDate, "%Y-%m-%d")
+
     #print("startDate %s, endDate: %s" % (startDate,endDate)	)
-       	
+
     operator = {'image1': org.draw_pr_count_monthly(startDate, endDate),
                 'image2': org.draw_comments_monthly(startDate, endDate)}
     image_output = operator[image_name]
@@ -45,16 +49,14 @@ def team_info():
 def get_team_image():
     teams = rackhd_config.Teams
     repo = rackhd_config.repos    
-    team_name = request.form['TeamName']
-    startDate = request.form['StartDate']
-    endDate = request.form['EndDate']	
+    team_name = request.form['TeamName'] or 'Maglev Team'
+    startDate = request.form['StartDate'] or '2015-10-01'
+    endDate = request.form['EndDate'] or datetime.now()
     image_name = request.form['image_name']    
-    if team_name is "":
-        team_name = 'Maglev Team'
-    if startDate is "":
-        startDate = datetime.strptime('2015-10-01T00:00:00Z', "%Y-%m-%dT%H:%M:%SZ")
-    if endDate is "":
-        endDate = datetime.now()
+    if type(startDate) == type(""):
+        startDate = datetime.strptime(startDate, "%Y-%m-%d")
+    if type(endDate) == type(""):
+        endDate = datetime.strptime(endDate, "%Y-%m-%d")
     team_members = teams[team_name]	
     #print("startDate %s, endDate: %s" % (startDate,endDate)	)
     t = model.Team(team_name, team_members)	

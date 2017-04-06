@@ -62,7 +62,7 @@ class Organization(object):
         _, rackhd_unmerged_count = self.rackhd.get_pr_count_monthly(startDate, endDate, repos, isMerged=False)        
         _, no_rackhd_created_count = self.no_rackhd.get_pr_count_monthly(startDate, endDate, repos)
         _, no_rackhd_merged_count = self.no_rackhd.get_pr_count_monthly(startDate, endDate, repos, isMerged=True)
-        _, no_rackhd_unmerged_count = self.no_rackhd.get_pr_count_monthly(startDate, endDate, repos, isMerged=False)        
+        _, no_rackhd_unmerged_count = self.no_rackhd.get_pr_count_monthly(startDate, endDate, repos, isMerged=False)
         ind = np.linspace(0.5, 9.5, len(month))
 #        y_ind = range(0, max(rackhd_created_count)+200, 100)
         fig, ax = plt.subplots(figsize = (12, 6))
@@ -146,7 +146,7 @@ class Team(object):
                     datelist.append((datetime1, datetime2))
                 else:
                     datelist.append((datetime1, endDate))
-                datetime1 = datetime2        
+                datetime1 = datetime2
         return datelist
    
     def get_pr_count_monthly(self, startDate, endDate, repos=None, isMerged=None):
@@ -199,15 +199,20 @@ class Team(object):
         pass
         duration_monthly = {}
         datelist = self.datetime_offset_by_month(startDate, endDate)
-        for datetuple in datelist:  
+        for datetuple in datelist:
             key = '%d-%d' % (datetuple[0].year, datetuple[0].month)
             durations = []
             durations.clear()
             for user in self.team_members:                  
                 durations += (user.get_pr_duration(datetuple[0], datetuple[1], repos))
-            duration_monthly[key] = round(sum(durations) / len(durations) , 2)        
-        month, duration_list = zip(*sorted(duration_monthly.items(), key = lambda x: x[0], reverse = False))       
-        return month, duration_list          
+            if not durations:
+                continue
+            duration_monthly[key] = round(sum(durations) / len(durations) , 2)
+        if duration_monthly:
+            month, duration_list = zip(*sorted(duration_monthly.items(), key = lambda x: x[0], reverse = False))
+            return month, duration_list
+        else:
+            return (),()
         
     def get_pr_count_member(self, startDate, endDate, repos):
         """ get created_pr count of each member

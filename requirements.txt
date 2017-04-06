@@ -1,3 +1,4 @@
-python==3.4.3
-Flask==0.12
-sqlite3
+requests
+flask_bootstrap
+flask_script
+matplotlib
