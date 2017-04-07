@@ -19,8 +19,11 @@ def create_app(config_name):
     config['default'].init_app(app)
 
     bootstrap.init_app(app)
-	
-    from .main import main as main_blueprint
+
+    from app.views.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
-    
+
+    from app.views.errors import set_error_handlers
+    set_error_handlers(app)
+
     return app

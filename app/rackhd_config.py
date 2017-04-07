@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 owner = 'rackhd'
-headers = {'Authorization': 'token a4e450ab4dfe265c4c2479337c60fbe4adbb2e2f','Accept': 'application/vnd.github.black-cat-preview+json'} 
+headers = {'Authorization': 'token 495788cd9b70f6fc191e41245722a6f3cf3ddea9','Accept': 'application/vnd.github.black-cat-preview+json'} 
 
 Teams = {'Maglev Team':['panpan0000', 'anhou', 'changev', 'yyscamper', 'iceiilin', 'nortonluo', 'WangWinson', 'pengz1', 'sunnyqianzhang', 'PengTian0', 'lanchongyizu', 'cgx027','leoyjchang', 'githubXing'],
         'Veyron Team':['jlongever', 'geoff-reid', 'keedya', 'uppalk1', 'BillyAbildagaard', 'zyoung51', 'delebremner', 'brianparry', 'tannoa2', 'srinia6'],
